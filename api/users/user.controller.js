@@ -4,7 +4,8 @@ const {
     getUsers, 
     updateUser, 
     deleteUser,
-    getUserByEmail } = require("./user.service");
+    getUserByEmail,
+    getUserByUsername } = require("./user.service");
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -80,6 +81,7 @@ module.exports = {
             }
             return res.json({
                 success:1,
+                result: results,
                 message: "Updated successfully"
             });
         });
@@ -100,7 +102,7 @@ module.exports = {
             }
             return res.json({
                 success:1,
-                data: results
+                result: results
             });
         });
     },
@@ -127,7 +129,8 @@ module.exports = {
                 return res.json({
                     success: 1,
                     message: "login successfully",
-                    token: jsontoken
+                    token: jsontoken,
+                    userId: results.userId
                 });
             }
             else {
@@ -136,6 +139,26 @@ module.exports = {
                     data: "Invalid email or password"
                 })
             }
+        });
+    },
+
+    getUserByUsername: (req, res) => {
+        const username = req.params.username;
+        getUserByUsername(username, (error, results) => {
+            if(error){
+                console.log(error);
+                return;
+            }
+            if(!results) {
+                return res.json({
+                    success: 0,
+                    message: "User not found"
+                });
+            }
+            return res.json({
+                success:1,
+                data: results
+            })
         });
     },
 

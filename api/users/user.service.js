@@ -5,14 +5,12 @@ module.exports = {
     createUser: (data, callBack) => {
         pool.query(
             `INSERT INTO users (
-                userId, 
                 username, 
                 email, 
                 passwordHash, 
                 fullName
-                ) VALUES (?,?,?,?,?)`,
+                ) VALUES (?,?,?,?)`,
             [
-                data.userId,
                 data.username,
                 data.email,
                 data.passwordHash,
@@ -42,8 +40,21 @@ module.exports = {
 
     getUserByUserId: (userId, callBack) => {
         pool.query(
-            `SELECT * FROM users WHERE userId = ?`,
+            `SELECT * FROM users WHERE userId = ? AND deleted = 0`,
             [userId],
+            (error, results, fields) => {
+                if (error){
+                    callBack(error);
+                }
+                return callBack(null, results[0]);
+            }
+        )
+    },
+
+    getUserByUsername: (username, callBack) => {
+        pool.query(
+            `SELECT * FROM users WHERE username = ? AND deleted = 0`,
+            [username],
             (error, results, fields) => {
                 if (error){
                     callBack(error);
@@ -55,7 +66,7 @@ module.exports = {
 
     updateUser: (data, callBack) => {
         pool.query(
-            `UPDATE users SET username = ?, email = ?, passwordHash = ?, fullName = ? WHERE userId = ?`,
+            `UPDATE users SET username = ?, email = ?, passwordHash = ?, fullName = ? WHERE userId = ? AND deleted = 0`,
             [
                 data.username,
                 data.email,
@@ -67,27 +78,27 @@ module.exports = {
                 if(error){
                     return callBack(error);
                 }
-                return callBack(null,results[0]);
+                return callBack(null,results);
             }
         )
     },
 
     deleteUser: (data, callBack) => {
         pool.query(
-            `DELETE FROM users WHERE userId = ?`,
+            `UPDATE users SET deleted = 1, deletedAt = CURRENT_TIMESTAMP() WHERE userId = ?`,
             [data.userId],
             (error, results, fields) => {
                 if(error){
                     return callBack(error);
                 }
-                return callBack(null,results[0]);
+                return callBack(null,results);
             }
         )
     },
 
     getUserByEmail: (email, callBack) => {
         pool.query(
-            `SELECT * FROM users WHERE email = ?`,
+            `SELECT * FROM users WHERE email = ? AND deleted = 0`,
             [email],
             (error, results, fields) => {
                 if (error){
