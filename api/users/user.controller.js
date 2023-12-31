@@ -130,7 +130,7 @@ module.exports = {
                     success: 1,
                     message: "login successfully",
                     token: jsontoken,
-                    data: results
+                    userId: results.userId
                 });
             }
             else {
