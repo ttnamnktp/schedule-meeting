@@ -67,7 +67,6 @@ module.exports = {
     updateUser: (req, res) => {
         const body = req.body;
         const salt = genSaltSync(10);
-        body.passwordHash = hashSync(body.passwordHash, salt);
         updateUser(body, (error, results) => {
             if(error){
                 console.log(error);
@@ -117,6 +116,7 @@ module.exports = {
                 return res.json({
                     success: 0,
                     message: "Invalid email or password"
+                    
                 });
             }
             const result = compareSync(body.passwordHash, results.passwordHash);
@@ -136,7 +136,7 @@ module.exports = {
             else {
                 return res.json({
                     success: 0,
-                    data: "Invalid email or password"
+                    message: "Invalid email or password"
                 })
             }
         });

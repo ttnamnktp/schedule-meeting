@@ -6,7 +6,9 @@ const meetingRouter = require("./api/meetingschedule/meetingschedule.router");
 const responseRouter = require("./api/response/response.router");
 
 app.use(express.json());
+var cors = require('cors')
 
+app.use(cors())
 app.use("/user", userRouter);
 app.use("/meeting", meetingRouter);
 app.use("/response", responseRouter);
