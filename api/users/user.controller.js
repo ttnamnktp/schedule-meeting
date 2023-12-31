@@ -5,7 +5,9 @@ const {
     updateUser, 
     deleteUser,
     getUserByEmail,
-    getUserByUsername } = require("./user.service");
+    getUserByUsername,
+    updateUsername
+ } = require("./user.service");
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -64,10 +66,29 @@ module.exports = {
         });
     },
 
+    updateUsername: (req, res) => {
+        const body = req.body;
+        updateUsername(body, (error, results) => {
+            if(error){
+                console.log(error);
+                return;
+            }
+            if(!results) {
+                return res.json({
+                    success: 0,
+                    message: "Failed to update"
+                })
+            }
+            return res.json({
+                success:1,
+                result: results,
+                message: "Updated successfully"
+            });
+        });
+    },
+
     updateUser: (req, res) => {
         const body = req.body;
-        const salt = genSaltSync(10);
-        body.passwordHash = hashSync(body.passwordHash, salt);
         updateUser(body, (error, results) => {
             if(error){
                 console.log(error);
