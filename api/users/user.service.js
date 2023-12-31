@@ -80,6 +80,22 @@ module.exports = {
         )
     },
 
+    updateUsername: (data, callBack) => {
+        pool.query(
+            `UPDATE users SET username = ? WHERE userId = ? AND deleted = 0`,
+            [
+                data.username,
+                data.userId
+            ],
+            (error, results, fields) => {
+                if(error){
+                    return callBack(error);
+                }
+                return callBack(null,results);
+            }
+        )
+    },
+
     deleteUser: (data, callBack) => {
         pool.query(
             `UPDATE users SET deleted = 1, deletedAt = CURRENT_TIMESTAMP() WHERE userId = ?`,
@@ -105,4 +121,5 @@ module.exports = {
             }
         )
     },
+
 }
