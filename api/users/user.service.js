@@ -66,7 +66,7 @@ module.exports = {
 
     updateUser: (data, callBack) => {
         pool.query(
-            `UPDATE users SET username = '?' WHERE userId = ? AND deleted = 0`,
+            `UPDATE users SET username = ? WHERE userId = ? AND deleted = 0`,
             [
                 data.username,
                 data.userId
@@ -97,6 +97,7 @@ module.exports = {
     },
 
     deleteUser: (data, callBack) => {
+        console.log(data.userId);
         pool.query(
             `UPDATE users SET deleted = 1, deletedAt = CURRENT_TIMESTAMP() WHERE userId = ?`,
             [data.userId],
