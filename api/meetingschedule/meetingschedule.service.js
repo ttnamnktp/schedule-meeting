@@ -63,8 +63,8 @@ module.exports = {
         pool.query(
             `SELECT ms.*
             FROM meetingschedule ms
-            RIGHT JOIN response r ON ms.meetingId = r.meetingId
-            WHERE r.userId = ? AND ms.deleted = 0;
+            JOIN response r ON ms.meetingId = r.meetingId
+            WHERE r.userId = ? AND ms.deleted = 0 AND ms.organizerId != r.userId;
             `,
             [participantId],
             (error, results, fields) => {
@@ -76,16 +76,36 @@ module.exports = {
         )
     },
 
-    getMeetingSchedulesByUserId: (participantId, callBack) => {
+    getMeetingSchedulesByUserId: (userId, callBack) => {
         pool.query(
             `SELECT ms.*
             FROM meetingschedule ms
-            LEFT JOIN response r ON ms.meetingId = r.meetingId
+            JOIN response r ON ms.meetingId = r.meetingId
             WHERE (r.userId = ? OR ms.organizerId = ?) AND ms.deleted = 0;
             `,
             [
-                participantId,
-                participantId
+                userId,
+                userId
+            ],
+            (error, results, fields) => {
+                if (error){
+                    callBack(error);
+                }
+                return callBack(null, results);
+            }
+        )
+    },
+
+    getConfirmedMeetingSchedules: (userId, callBack) => {
+        pool.query(
+            `SELECT ms.*
+            FROM meetingschedule ms
+            JOIN response r ON ms.meetingId = r.meetingId
+            WHERE (r.userId = ? OR ms.organizerId = ?) AND status = 'confirmed' AND ms.deleted = 0;
+            `,
+            [
+                userId,
+                userId
             ],
             (error, results, fields) => {
                 if (error){
