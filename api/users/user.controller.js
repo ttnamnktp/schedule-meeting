@@ -110,6 +110,7 @@ module.exports = {
 
     deleteUser: (req, res) => {
         const data = req.body;
+        console.log(data);
         deleteUser(data, (error, results) => {
             if(error){
                 console.log(error);
