@@ -64,7 +64,7 @@ module.exports = {
             `SELECT ms.*
             FROM meetingschedule ms
             RIGHT JOIN response r ON ms.meetingId = r.meetingId
-            WHERE r.userId = ? AND deleted = 0;
+            WHERE r.userId = ? AND ms.deleted = 0;
             `,
             [participantId],
             (error, results, fields) => {
