@@ -2,7 +2,8 @@ const {
     createResponse,
     getAllResponses,
     updateResponse,
-    deleteResponse
+    deleteResponse,
+    getResponseByUserId
     } = require("./response.service");
 
 module.exports = {
@@ -26,6 +27,20 @@ module.exports = {
 
     getAllResponses: (req, res) => {
         getAllResponses((error, results) => {
+            if(error){
+                console.log(error);
+                return;
+            }
+            return res.json({
+                success:1,
+                data: results
+            });
+        });
+    },
+
+    getResponseByUserId: (req, res) => {
+        const userId = req.params.userId;
+        getResponseByUserId(userId, (error, results) => {
             if(error){
                 console.log(error);
                 return;

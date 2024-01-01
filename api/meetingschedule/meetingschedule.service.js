@@ -3,9 +3,9 @@ const pool = require("../../config/database");
 module.exports = {
 
     createMeetingSchedule: (data, callBack) => {
-        console.log(data.startTime);
+        // console.log(data.startTime);
         const startTimeJson = JSON.stringify(data.startTime);
-        console.log(startTimeJson);
+        // console.log(startTimeJson);
 
         pool.query(
             `INSERT INTO meetingschedule (
@@ -42,7 +42,7 @@ module.exports = {
                     doanText[i] = 'yes';
                 }
                 const choiceJson = JSON.stringify(doanText);
-                console.log(choiceJson);
+                // console.log(choiceJson);
 
                 const meetingId = resultsMeeting.insertId;
 
@@ -222,29 +222,26 @@ module.exports = {
     },
 
     updateMeetingSchedule: (data, callBack) => {
+        const startTimeJson = JSON.stringify(data.startTime);
         pool.query(
             `UPDATE meetingschedule
             SET
               title = ?,
-              organizerId = ?,
               startTime = ?,
               duration = ?,
               location = ?,
               description = ?,
               status = ?,
-              createdBy = ?,
               modifiedAt = CURRENT_TIMESTAMP(),
               modifiedBy = organizerId
             WHERE meetingId = ?;`,
             [
                 data.title,
-                data.organizerId,
-                data.startTime,
+                startTimeJson,
                 data.duration,
                 data.location,
                 data.description,
                 data.status,
-                data.createdBy,
                 data.meetingId
             ],
             (error, results, fields) => {
