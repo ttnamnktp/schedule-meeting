@@ -46,7 +46,7 @@ module.exports = {
     },
 
     getMeetingSchedulesByOrganizerId: (req, res) => {
-        const organizerId = req.body.userId;
+        const organizerId = req.params.userId;
         getMeetingSchedulesByOrganizerId(organizerId, (error, results) => {
             if(error){
                 console.log(error);
@@ -60,7 +60,7 @@ module.exports = {
     },
 
     getMeetingSchedulesByParticipantId: (req, res) => {
-        const participantId = req.body.userId;
+        const participantId = req.params.userId;
         getMeetingSchedulesByParticipantId(participantId, (error, results) => {
             if(error){
                 console.log(error);
@@ -74,7 +74,7 @@ module.exports = {
     },
 
     getMeetingSchedulesByUserId: (req, res) => {
-        const userId = req.body.userId;
+        const userId = req.params.userId;
         getMeetingSchedulesByUserId(userId, (error, results) => {
             if(error){
                 console.log(error);
@@ -102,7 +102,7 @@ module.exports = {
     },
 
     getConfirmedMeetingSchedules: (req, res) => {
-        const userId = req.body.userId;
+        const userId = req.params.userId;
         getConfirmedMeetingSchedules(userId, (error, results) => {
             if(error){
                 console.log(error);
