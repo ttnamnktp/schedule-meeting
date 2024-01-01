@@ -6,7 +6,8 @@ const {
     getMeetingSchedulesByUserId,
     getMeetingSchedulesByTitle,
     updateMeetingSchedule,
-    deleteMeetingSchedule
+    deleteMeetingSchedule,
+    getConfirmedMeetingSchedules
     } = require("./meetingschedule.service");
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
@@ -45,7 +46,7 @@ module.exports = {
     },
 
     getMeetingSchedulesByOrganizerId: (req, res) => {
-        const organizerId = req.params.organizerId;
+        const organizerId = req.body.userId;
         getMeetingSchedulesByOrganizerId(organizerId, (error, results) => {
             if(error){
                 console.log(error);
@@ -59,7 +60,7 @@ module.exports = {
     },
 
     getMeetingSchedulesByParticipantId: (req, res) => {
-        const participantId = req.params.participantId;
+        const participantId = req.body.userId;
         getMeetingSchedulesByParticipantId(participantId, (error, results) => {
             if(error){
                 console.log(error);
@@ -73,7 +74,7 @@ module.exports = {
     },
 
     getMeetingSchedulesByUserId: (req, res) => {
-        const userId = req.params.userId;
+        const userId = req.body.userId;
         getMeetingSchedulesByUserId(userId, (error, results) => {
             if(error){
                 console.log(error);
@@ -87,8 +88,22 @@ module.exports = {
     },
 
     getMeetingSchedulesByTitle: (req, res) => {
-        const title = req.params.title;
+        const title = req.body.title;
         getMeetingSchedulesByTitle(title, (error, results) => {
+            if(error){
+                console.log(error);
+                return;
+            }
+            return res.json({
+                success:1,
+                data: results
+            });
+        });
+    },
+
+    getConfirmedMeetingSchedules: (req, res) => {
+        const userId = req.body.userId;
+        getConfirmedMeetingSchedules(userId, (error, results) => {
             if(error){
                 console.log(error);
                 return;

@@ -6,7 +6,8 @@ const {
     getMeetingSchedulesByTitle,
     getMeetingSchedulesByUserId,
     updateMeetingSchedule,
-    deleteMeetingSchedule
+    deleteMeetingSchedule,
+    getConfirmedMeetingSchedules
 } = require("./meetingschedule.controller");
 
 const router = require("express").Router();
@@ -14,10 +15,26 @@ const { checkToken } = require("../../auth/token_validation");
 
 router.post("/create", createMeetingSchedule);
 router.get("/", getAllMeetingSchedules);
-router.get("/search/organizerId/:organizerId", getMeetingSchedulesByOrganizerId);
-router.get("/search/participantId/:participantId", getMeetingSchedulesByParticipantId);
-router.get("/search/title/:title", getMeetingSchedulesByTitle);
-router.get("/search/userId/:userId", getMeetingSchedulesByUserId);
+
+// ------------- GET LIST OF MEETINGS ------------
+
+// lấy các meeeting mà userId là người tạo
+router.get("/search/organizer", getMeetingSchedulesByOrganizerId);
+
+// lấy các meeeting mà userId là người tham gia
+router.get("/search/participant", getMeetingSchedulesByParticipantId);
+
+// lấy các meeeting theo tên
+router.get("/search/title", getMeetingSchedulesByTitle);
+
+// lấy các meeeting mà userId là người tạo hoặc người tham gia
+router.get("/search/user", getMeetingSchedulesByUserId);
+
+// lấy các meeeting mà userId là người tạo hoặc người tham gia và được confirmed
+router.get("/search/confirmedmeeting", getConfirmedMeetingSchedules);
+
+// ------------- GET LIST OF MEETINGS ------------
+
 router.patch("/update", updateMeetingSchedule);
 router.patch("/delete", deleteMeetingSchedule);
 
