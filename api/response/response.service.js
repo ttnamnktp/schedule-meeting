@@ -61,13 +61,8 @@ module.exports = {
                     callBack(error);
                 }
                 for (let i = 0; i < results.length; i++){
-                    // Lấy giá trị của trường startTime từ kết quả
                     const choiceJsonString = results[i].choice;
-
-                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
                     const choiceObject = JSON.parse(choiceJsonString);
-
-                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
                     results[i].choice = choiceObject;
                 }
                 return callBack(null, results);
