@@ -28,25 +28,41 @@ module.exports = {
                 data.status,
                 data.createdBy
             ],
-            (error, results, fields) => {
+            (error, resultsMeeting, fields) => {
                 if(error){
                     return callBack(error);
                 }
-                return callBack(null,results);
+                // Lấy số phần tử trong startTime
+                const danhSachKeys = Object.keys(data.startTime);
+                const soLuongPhanTu = danhSachKeys.length;
+
+                // tạo response
+                const doanText = {};
+                for (let i = 0; i < soLuongPhanTu; i++) {
+                    doanText[i] = 'yes';
+                }
+                const choiceJson = JSON.stringify(doanText);
+                console.log(choiceJson);
+
+                const meetingId = resultsMeeting.insertId;
+
+                pool.query(
+                    `INSERT INTO response (userId, meetingId, choice)
+                    VALUES (?, ?, ?);`,
+                    [
+                        data.organizerId,
+                        meetingId,
+                        choiceJson
+                    ],
+                    (error, resultsResponse, fields) => {
+                        if(error){
+                            return callBack(error);
+                        }
+                        return callBack(null,resultsMeeting,resultsResponse);
+                    }
+                )
             }
         )
-
-        // // tạo response
-        // // Sử dụng split để chia chuỗi thành mảng dựa trên dấu ":"
-        // const mangChuoi = trangThai.split(":");
-        // // Đếm số lượng phần tử trong mảng, trừ 1 để đếm số dấu ":"
-        // const soLuongDauChamHoi = mangChuoi.length - 1;
-        // const doanText = {};
-        // for (let i = 0; i < soLuongPhanTu; i++) {
-        //     doanText[i] = 'yes';
-        // }
-        // console.log(JSON.stringify(doanText));
-
     },
 
     getAllMeetingSchedules: callBack => {
@@ -56,6 +72,16 @@ module.exports = {
             (error, results, fields) => {
                 if (error){
                     callBack(error);
+                }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
                 }
                 return callBack(null, results);
             }
@@ -69,6 +95,16 @@ module.exports = {
             (error, results, fields) => {
                 if (error){
                     callBack(error);
+                }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
                 }
                 return callBack(null, results);
             }
@@ -86,6 +122,16 @@ module.exports = {
             (error, results, fields) => {
                 if (error){
                     callBack(error);
+                }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
                 }
                 return callBack(null, results);
             }
@@ -107,6 +153,16 @@ module.exports = {
                 if (error){
                     callBack(error);
                 }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
+                }
                 return callBack(null, results);
             }
         )
@@ -127,6 +183,16 @@ module.exports = {
                 if (error){
                     callBack(error);
                 }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
+                }
                 return callBack(null, results);
             }
         )
@@ -139,6 +205,16 @@ module.exports = {
             (error, results, fields) => {
                 if (error){
                     callBack(error);
+                }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
                 }
                 return callBack(null, results);
             }

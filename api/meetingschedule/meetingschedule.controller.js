@@ -17,7 +17,7 @@ module.exports = {
 
     createMeetingSchedule: (req, res) => {
         const body = req.body;
-        createMeetingSchedule(body, (error, results) => {
+        createMeetingSchedule(body, (error, resultsMeeting, resultsResponse) => {
             if(error) {
                 console.log(error);
                 return res.status(500).json({
@@ -27,7 +27,8 @@ module.exports = {
             }
             return res.status(200).json({
                 success: 1,
-                data: results
+                dataMeeting: resultsMeeting,
+                dataResponse: resultsResponse
             });
         });
     },

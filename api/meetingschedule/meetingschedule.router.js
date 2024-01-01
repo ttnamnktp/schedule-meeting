@@ -25,7 +25,7 @@ router.get("/search/organizer/:userId", getMeetingSchedulesByOrganizerId);
 router.get("/search/participant/:userId", getMeetingSchedulesByParticipantId);
 
 // lấy các meeeting theo tên
-// router.get("/search/title", getMeetingSchedulesByTitle);
+router.get("/search/title", getMeetingSchedulesByTitle);
 
 // lấy các meeeting mà userId là người tạo hoặc người tham gia
 router.get("/search/user/:userId", getMeetingSchedulesByUserId);
