@@ -13,7 +13,7 @@ module.exports = {
                 description, 
                 status, 
                 createdBy
-              ) VALUES (?,?,?,?,?,?,?,?)`,
+              ) VALUES (?,?,"{?}",?,?,?,?,?)`,
             [
                 data.title,
                 data.organizerId,
