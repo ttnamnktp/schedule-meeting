@@ -42,7 +42,6 @@ module.exports = {
                     doanText[i] = 'yes';
                 }
                 const choiceJson = JSON.stringify(doanText);
-                console.log(choiceJson);
 
                 const meetingId = resultsMeeting.insertId;
 
