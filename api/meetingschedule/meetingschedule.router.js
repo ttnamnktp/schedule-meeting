@@ -19,19 +19,19 @@ router.get("/", getAllMeetingSchedules);
 // ------------- GET LIST OF MEETINGS ------------
 
 // lấy các meeeting mà userId là người tạo
-router.get("/search/organizer", getMeetingSchedulesByOrganizerId);
+router.get("/search/organizer/:userId", getMeetingSchedulesByOrganizerId);
 
 // lấy các meeeting mà userId là người tham gia
-router.get("/search/participant", getMeetingSchedulesByParticipantId);
+router.get("/search/participant/:userId", getMeetingSchedulesByParticipantId);
 
 // lấy các meeeting theo tên
-router.get("/search/title", getMeetingSchedulesByTitle);
+// router.get("/search/title", getMeetingSchedulesByTitle);
 
 // lấy các meeeting mà userId là người tạo hoặc người tham gia
-router.get("/search/user", getMeetingSchedulesByUserId);
+router.get("/search/user/:userId", getMeetingSchedulesByUserId);
 
 // lấy các meeeting mà userId là người tạo hoặc người tham gia và được confirmed
-router.get("/search/confirmedmeeting", getConfirmedMeetingSchedules);
+router.get("/search/confirmedmeeting/:userId", getConfirmedMeetingSchedules);
 
 // ------------- GET LIST OF MEETINGS ------------
 

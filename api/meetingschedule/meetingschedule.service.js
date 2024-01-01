@@ -3,6 +3,10 @@ const pool = require("../../config/database");
 module.exports = {
 
     createMeetingSchedule: (data, callBack) => {
+        console.log(data.startTime);
+        const startTimeJson = JSON.stringify(data.startTime);
+        console.log(startTimeJson);
+
         pool.query(
             `INSERT INTO meetingschedule (
                 title, 
@@ -17,7 +21,7 @@ module.exports = {
             [
                 data.title,
                 data.organizerId,
-                data.startTime,
+                startTimeJson,
                 data.duration,
                 data.location,
                 data.description,
@@ -31,6 +35,18 @@ module.exports = {
                 return callBack(null,results);
             }
         )
+
+        // // tạo response
+        // // Sử dụng split để chia chuỗi thành mảng dựa trên dấu ":"
+        // const mangChuoi = trangThai.split(":");
+        // // Đếm số lượng phần tử trong mảng, trừ 1 để đếm số dấu ":"
+        // const soLuongDauChamHoi = mangChuoi.length - 1;
+        // const doanText = {};
+        // for (let i = 0; i < soLuongPhanTu; i++) {
+        //     doanText[i] = 'yes';
+        // }
+        // console.log(JSON.stringify(doanText));
+
     },
 
     getAllMeetingSchedules: callBack => {
