@@ -25,19 +25,19 @@ router.post("/create", createMeetingSchedule);
 router.get("/search/organizer/:userId", getMeetingSchedulesByOrganizerId);
 //-----------------------------------------
 
-// lấy các meeeting mà userId là người tham gia
+//------------- lấy các meeeting mà userId là người tham gia
 router.get("/search/participant/:userId", getMeetingSchedulesByParticipantId);
 //-----------------------------------------
 
-// lấy các meeeting theo tên
+//------------- lấy các meeeting theo tên
 router.get("/search/title", getMeetingSchedulesByTitle);
 //-----------------------------------------
 
-// lấy các meeeting mà userId là người tạo hoặc người tham gia
+//------------- lấy các meeeting mà userId là người tạo hoặc người tham gia
 router.get("/search/user/:userId", getMeetingSchedulesByUserId);
 //-----------------------------------------
 
-// lấy các meeeting mà userId là người tạo hoặc người tham gia và được confirmed
+//------------- lấy các meeeting mà userId là người tạo hoặc người tham gia và được confirmed
 router.get("/search/confirmedmeeting/:userId", getConfirmedMeetingSchedules);
 //-----------------------------------------
 
