@@ -50,11 +50,11 @@ module.exports = {
         )
     },
 
-    getResponseByUserId: (userId, callBack) => {
+    getResponseByMeetingId: (meetingId, callBack) => {
         pool.query(
-            `SELECT * FROM response WHERE userId = ?`,
+            `SELECT * FROM response WHERE meetingId = ?`,
             [
-                userId
+                meetingId
             ],
             (error, results, fields) => {
                 if (error){
