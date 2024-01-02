@@ -143,7 +143,7 @@ module.exports = {
             `SELECT ms.*
             FROM meetingschedule ms
             JOIN response r ON ms.meetingId = r.meetingId
-            WHERE (r.userId = ? OR ms.organizerId = ?) AND ms.deleted = 0;
+            WHERE r.userId = ? AND ms.deleted = 0;
             `,
             [
                 userId,
@@ -173,7 +173,7 @@ module.exports = {
             `SELECT ms.*
             FROM meetingschedule ms
             JOIN response r ON ms.meetingId = r.meetingId
-            WHERE (r.userId = ? OR ms.organizerId = ?) AND status = 'confirmed' AND ms.deleted = 0;
+            WHERE r.userId = ? AND status = 'confirmed' AND ms.deleted = 0;
             `,
             [
                 userId,
