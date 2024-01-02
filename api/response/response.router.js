@@ -3,7 +3,7 @@ const {
     getAllResponses,
     updateResponse,
     deleteResponse,
-    getResponseByUserId
+    getResponseByMeetingId
 } = require("./response.controller");
 
 const router = require("express").Router();
@@ -16,9 +16,9 @@ router.post("/create", createResponse);
 
 // router.get("/", getAllResponses);
 
-// -------------- lấy response theo userId --------------
-//--------------- truyền tham số userId qua params trên đường dẫn 
-router.get("/search/user/:userId", getResponseByUserId);
+// -------------- lấy response theo meetingId --------------
+//--------------- truyền tham số meetingId qua params trên đường dẫn 
+router.get("/search/meeting/:meetingId", getResponseByMeetingId);
 // ------------------------------------------------------
 
 //-------------- update lại trường choice trong response,

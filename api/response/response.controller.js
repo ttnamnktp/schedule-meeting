@@ -3,7 +3,7 @@ const {
     getAllResponses,
     updateResponse,
     deleteResponse,
-    getResponseByUserId
+    getResponseByMeetingId
     } = require("./response.service");
 
 module.exports = {
@@ -38,9 +38,9 @@ module.exports = {
         });
     },
 
-    getResponseByUserId: (req, res) => {
-        const userId = req.params.userId;
-        getResponseByUserId(userId, (error, results) => {
+    getResponseByMeetingId: (req, res) => {
+        const meetingId = req.params.meetingId;
+        getResponseByMeetingId(meetingId, (error, results) => {
             if(error){
                 console.log(error);
                 return;
