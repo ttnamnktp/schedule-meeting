@@ -17,7 +17,7 @@ const { checkToken } = require("../../auth/token_validation");
 router.post("/create", createMeetingSchedule);
 //-----------------------------------------
 
-// router.get("/", getAllMeetingSchedules);
+router.get("/", getAllMeetingSchedules);
 
 // ------------- GET LIST OF MEETINGS ------------
 
