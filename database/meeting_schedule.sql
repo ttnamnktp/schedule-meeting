@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 01 jan. 2024 à 15:08
+-- Généré le : mar. 02 jan. 2024 à 16:35
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.2.4
 
@@ -50,10 +50,26 @@ CREATE TABLE `meetingschedule` (
 --
 
 INSERT INTO `meetingschedule` (`meetingId`, `title`, `organizerId`, `startTime`, `duration`, `location`, `description`, `status`, `createdAt`, `createdBy`, `modifiedAt`, `modifiedBy`, `deleted`, `deletedAt`, `deletedBy`) VALUES
-(1, 'BirthDay Meeting', 1, '{\"0\":\"2024-05-01T11: 41: 41.318Z\",\"1\":\"2024-04-01T11: 46: 31.578Z\",\"2\":\"2024-04-12T11: 46: 31.578Z\"}', 120, 'Conference Room XXX', 'Discuss project updates', 'confirmed', '2024-01-01 14:01:04', 1, '2024-01-01 14:04:02', NULL, 0, NULL, NULL),
+(1, 'BirthDay Meeting', 1, '{\"0\":\"2024-05-01T11: 41: 41.318Z\",\"1\":\"2024-04-01T11: 46: 31.578Z\",\"2\":\"2024-04-12T11: 46: 31.578Z\"}', 120, 'Conference Room XXX', 'Discuss project updates', 'confirmed', '2024-01-01 14:01:04', 1, '2024-01-02 15:35:10', NULL, 0, NULL, NULL),
 (2, 'Work Meeting', 1, '{\"0\":\"2024-05-04T11: 41: 41.318Z\",\"1\":\"2024-04-04T11: 46: 31.578Z\"}', 20, 'Conference Room T', 'Discuss project updates', 'scheduled', '2024-01-01 14:01:53', 1, '2024-01-01 14:01:53', NULL, 0, NULL, NULL),
-(3, 'Sleep Party', 2, '{\"0\":\"2024-05-05T11: 41: 41.318Z\",\"1\":\"2024-05-06T11: 46: 31.578Z\"}', 20, 'Room U', 'Discuss project updates', 'scheduled', '2024-01-01 14:02:33', 1, '2024-01-01 14:06:25', NULL, 0, NULL, NULL),
-(4, 'Night Meeting', 3, '{\"0\":\"2024-01-01T21: 41: 41.318Z\",\"1\":\"2024-01-01T20: 46: 31.578Z\"}', 240, 'Conference R', 'Discuss project updates', 'scheduled', '2024-01-01 14:08:13', 2, '2024-01-01 14:08:13', NULL, 0, NULL, NULL);
+(3, 'Sleep Party', 2, '{\"0\":\"2024-05-05T11: 41: 41.318Z\",\"1\":\"2024-05-06T11: 46: 31.578Z\"}', 20, 'Room U', 'Discuss project updates', 'scheduled', '2024-01-01 14:02:33', 2, '2024-01-02 15:34:21', NULL, 0, NULL, NULL),
+(4, 'Night Meeting', 3, '{\"0\":\"2024-01-01T21: 41: 41.318Z\",\"1\":\"2024-01-01T20: 46: 31.578Z\"}', 90, 'Conference Room T', 'Discuss project updates', 'confirmed', '2024-01-01 14:08:13', 3, '2024-01-02 15:34:25', 3, 0, NULL, NULL);
+
+--
+-- Déclencheurs `meetingschedule`
+--
+DELIMITER $$
+CREATE TRIGGER `tr_meetingschedule_deleted` AFTER UPDATE ON `meetingschedule` FOR EACH ROW BEGIN
+    IF NEW.deleted = 1 AND OLD.deleted = 0 THEN
+        -- Nếu trường deleted được thiết lập từ 0 thành 1
+        UPDATE response
+        SET deleted = 1,
+        	deletedAt = CURRENT_TIMESTAMP
+        WHERE meetingId = OLD.meetingId;
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -77,10 +93,12 @@ CREATE TABLE `response` (
 --
 
 INSERT INTO `response` (`responseId`, `userId`, `meetingId`, `createdAt`, `modifiedAt`, `deleted`, `deletedAt`, `choice`) VALUES
-(1, 1, 1, '2024-01-01 14:01:04', NULL, 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\",\"2\":\"yes\"}'),
+(1, 1, 1, '2024-01-01 14:01:04', '2024-01-02 15:33:54', 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\",\"2\":\"yes\"}'),
 (2, 1, 2, '2024-01-01 14:01:53', NULL, 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\"}'),
 (3, 2, 3, '2024-01-01 14:02:33', NULL, 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\"}'),
-(4, 3, 4, '2024-01-01 14:08:13', NULL, 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\"}');
+(4, 3, 4, '2024-01-01 14:08:13', NULL, 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\"}'),
+(5, 2, 1, '2024-01-01 16:06:10', '2024-01-02 15:34:00', 0, NULL, '{\"0\":\"no\",\"1\":\"yes\",\"2\":\"no\"}'),
+(6, 2, 2, '2024-01-01 16:07:53', NULL, 0, NULL, '{\"0\":\"no\",\"1\":\"yes\"}');
 
 -- --------------------------------------------------------
 
@@ -150,7 +168,7 @@ ALTER TABLE `meetingschedule`
 -- AUTO_INCREMENT pour la table `response`
 --
 ALTER TABLE `response`
-  MODIFY `responseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `responseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `users`

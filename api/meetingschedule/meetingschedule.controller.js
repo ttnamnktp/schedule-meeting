@@ -118,12 +118,12 @@ module.exports = {
 
     updateMeetingSchedule: (req, res) => {
         const body = req.body;
-        updateMeetingSchedule(body, (error, results) => {
+        updateMeetingSchedule(body, (error, resultsMeeting, resultsResponse) => {
             if(error){
                 console.log(error);
                 return;
             }
-            if(!results) {
+            if(!resultsMeeting) {
                 return res.json({
                     success: 0,
                     message: "Failed to update"
@@ -131,6 +131,8 @@ module.exports = {
             }
             return res.json({
                 success:1,
+                resultsMeeting: resultsMeeting,
+                resultsResponse: resultsResponse,
                 message: "Updated successfully"
             });
         });

@@ -243,12 +243,40 @@ module.exports = {
                 data.status,
                 data.meetingId
             ],
-            (error, results, fields) => {
+            (error, resultsMeeting, fields) => {
                 if(error){
                     console.log(error)
                     return callBack(error);
                 }
-                return callBack(null,results);
+                // Lấy số phần tử trong startTime
+                const danhSachKeys = Object.keys(data.startTime);
+                const soLuongPhanTu = danhSachKeys.length;
+
+                // sửa response của organizer
+                const doanText = {};
+                for (let i = 0; i < soLuongPhanTu; i++) {
+                    doanText[i] = 'yes';
+                }
+                const choiceJson = JSON.stringify(doanText);
+                // console.log(choiceJson);
+
+                pool.query(
+                    `UPDATE response
+                    SET
+                        choice = ?
+                    WHERE meetingId = ? AND userId = ?;`,
+                    [
+                        choiceJson,
+                        data.meetingId,
+                        data.organizerId
+                    ],
+                    (error, resultsResponse, fields) => {
+                        if(error){
+                            return callBack(error);
+                        }
+                        return callBack(null,resultsMeeting,resultsResponse);
+                    }
+                )
             }
         )
     },
