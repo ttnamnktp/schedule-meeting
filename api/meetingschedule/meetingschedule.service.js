@@ -264,11 +264,10 @@ module.exports = {
                     `UPDATE response
                     SET
                         choice = ?
-                    WHERE meetingId = ? AND userId = ?;`,
+                    WHERE meetingId = ?;`,
                     [
                         choiceJson,
                         data.meetingId,
-                        data.organizerId
                     ],
                     (error, resultsResponse, fields) => {
                         if(error){
@@ -282,6 +281,7 @@ module.exports = {
     },
 
     deleteMeetingSchedule: (data, callBack) => {
+        console.log(data.meetingId);
         pool.query(
             `UPDATE meetingschedule SET deleted = 1 , deletedAt = CURRENT_TIMESTAMP(), deletedBy = organizerId WHERE meetingId = ?`,
             [data.meetingId],

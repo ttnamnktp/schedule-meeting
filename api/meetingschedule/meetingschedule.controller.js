@@ -140,6 +140,7 @@ module.exports = {
 
     deleteMeetingSchedule: (req, res) => {
         const data = req.body;
+        console.log(req.body);
         deleteMeetingSchedule(data, (error, results) => {
             if(error){
                 console.log(error);
