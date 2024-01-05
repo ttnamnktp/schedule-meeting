@@ -2,7 +2,8 @@ const {
     createResponse,
     getAllResponses,
     updateResponse,
-    deleteResponse
+    deleteResponse,
+    getResponseByMeetingId
     } = require("./response.service");
 
 module.exports = {
@@ -26,6 +27,20 @@ module.exports = {
 
     getAllResponses: (req, res) => {
         getAllResponses((error, results) => {
+            if(error){
+                console.log(error);
+                return;
+            }
+            return res.json({
+                success:1,
+                data: results
+            });
+        });
+    },
+
+    getResponseByMeetingId: (req, res) => {
+        const meetingId = req.params.meetingId;
+        getResponseByMeetingId(meetingId, (error, results) => {
             if(error){
                 console.log(error);
                 return;

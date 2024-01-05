@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : dim. 31 déc. 2023 à 09:20
+-- Généré le : mar. 02 jan. 2024 à 16:35
 -- Version du serveur : 10.4.28-MariaDB
 -- Version de PHP : 8.2.4
 
@@ -31,11 +31,11 @@ CREATE TABLE `meetingschedule` (
   `meetingId` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `organizerId` int(11) DEFAULT NULL,
-  `startTime` text DEFAULT NULL,
+  `startTime` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
   `duration` int(11) NOT NULL,
   `location` varchar(255) DEFAULT NULL,
   `description` text DEFAULT NULL,
-  `status` enum('scheduled','in_progress','completed','canceled') DEFAULT 'scheduled',
+  `status` enum('scheduled','confirmed') DEFAULT 'scheduled',
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `createdBy` int(11) DEFAULT NULL,
   `modifiedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -50,9 +50,26 @@ CREATE TABLE `meetingschedule` (
 --
 
 INSERT INTO `meetingschedule` (`meetingId`, `title`, `organizerId`, `startTime`, `duration`, `location`, `description`, `status`, `createdAt`, `createdBy`, `modifiedAt`, `modifiedBy`, `deleted`, `deletedAt`, `deletedBy`) VALUES
-(2, 'Meeting 2', 1, '{{\"date\": \"2023-04-01 10:00:00\"},{\"date\": \"2023-04-02 15:30:00\"},{\"date\": \"2023-04-03 09:00:00\"}}', 60, 'Conference Room A', 'Discuss project updates', 'scheduled', '2023-12-30 17:32:38', 1, '2023-12-30 17:51:50', NULL, 0, NULL, NULL),
-(3, 'Meeting 4', 1, '{ {\"date\": \"2023-05-01 10:00:00\"}, {\"date\": \"2023-05-02 15:30:00\"}, {\"date\": \"2023-05-03 09:00:00\"}}', 90, 'Conference Room B', 'Discuss project updates', 'scheduled', '2023-12-30 17:47:02', 1, '2023-12-30 17:47:02', NULL, 0, NULL, NULL),
-(4, 'Evening Meeting AAA', 2, '{ {\"date\": \"2023-05-06 10:00:00\"}, {\"date\": \"2023-07-22 15:30:00\"}}', 90, 'Conference Room T', 'Discuss project updates', 'scheduled', '2023-12-31 03:09:53', 2, '2023-12-31 04:48:43', 2, 0, NULL, NULL);
+(1, 'BirthDay Meeting', 1, '{\"0\":\"2024-05-01T11: 41: 41.318Z\",\"1\":\"2024-04-01T11: 46: 31.578Z\",\"2\":\"2024-04-12T11: 46: 31.578Z\"}', 120, 'Conference Room XXX', 'Discuss project updates', 'confirmed', '2024-01-01 14:01:04', 1, '2024-01-02 15:35:10', NULL, 0, NULL, NULL),
+(2, 'Work Meeting', 1, '{\"0\":\"2024-05-04T11: 41: 41.318Z\",\"1\":\"2024-04-04T11: 46: 31.578Z\"}', 20, 'Conference Room T', 'Discuss project updates', 'scheduled', '2024-01-01 14:01:53', 1, '2024-01-01 14:01:53', NULL, 0, NULL, NULL),
+(3, 'Sleep Party', 2, '{\"0\":\"2024-05-05T11: 41: 41.318Z\",\"1\":\"2024-05-06T11: 46: 31.578Z\"}', 20, 'Room U', 'Discuss project updates', 'scheduled', '2024-01-01 14:02:33', 2, '2024-01-02 15:34:21', NULL, 0, NULL, NULL),
+(4, 'Night Meeting', 3, '{\"0\":\"2024-01-01T21: 41: 41.318Z\",\"1\":\"2024-01-01T20: 46: 31.578Z\"}', 90, 'Conference Room T', 'Discuss project updates', 'confirmed', '2024-01-01 14:08:13', 3, '2024-01-02 15:34:25', 3, 0, NULL, NULL);
+
+--
+-- Déclencheurs `meetingschedule`
+--
+DELIMITER $$
+CREATE TRIGGER `tr_meetingschedule_deleted` AFTER UPDATE ON `meetingschedule` FOR EACH ROW BEGIN
+    IF NEW.deleted = 1 AND OLD.deleted = 0 THEN
+        -- Nếu trường deleted được thiết lập từ 0 thành 1
+        UPDATE response
+        SET deleted = 1,
+        	deletedAt = CURRENT_TIMESTAMP
+        WHERE meetingId = OLD.meetingId;
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -68,7 +85,7 @@ CREATE TABLE `response` (
   `modifiedAt` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `deleted` tinyint(1) DEFAULT 0,
   `deletedAt` timestamp NULL DEFAULT NULL,
-  `choice` text DEFAULT NULL
+  `choice` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`choice`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -76,8 +93,12 @@ CREATE TABLE `response` (
 --
 
 INSERT INTO `response` (`responseId`, `userId`, `meetingId`, `createdAt`, `modifiedAt`, `deleted`, `deletedAt`, `choice`) VALUES
-(3, 2, 2, '2023-12-31 07:39:36', '2023-12-31 08:20:16', 0, '2023-12-31 08:20:06', '{{\"choice\": 0},{\"choice\": 1}, {\"choice\": 1}}'),
-(5, 2, 3, '2023-12-31 07:44:38', NULL, 0, NULL, '{{\"choice\": 1},{\"choice\": 0}}');
+(1, 1, 1, '2024-01-01 14:01:04', '2024-01-02 15:33:54', 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\",\"2\":\"yes\"}'),
+(2, 1, 2, '2024-01-01 14:01:53', NULL, 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\"}'),
+(3, 2, 3, '2024-01-01 14:02:33', NULL, 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\"}'),
+(4, 3, 4, '2024-01-01 14:08:13', NULL, 0, NULL, '{\"0\":\"yes\",\"1\":\"yes\"}'),
+(5, 2, 1, '2024-01-01 16:06:10', '2024-01-02 15:34:00', 0, NULL, '{\"0\":\"no\",\"1\":\"yes\",\"2\":\"no\"}'),
+(6, 2, 2, '2024-01-01 16:07:53', NULL, 0, NULL, '{\"0\":\"no\",\"1\":\"yes\"}');
 
 -- --------------------------------------------------------
 
@@ -103,8 +124,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userId`, `username`, `email`, `passwordHash`, `fullName`, `registrationDate`, `lastLogin`, `deleted`, `deletedAt`, `isAdmin`) VALUES
-(1, 'john_doe', 'john.doe@example.com', '$2b$10$2H7IsyfXDiLgM5AAUDN8ge3DlAECXckmqkowtu/ev5gCQCjH8FLbq', 'John Doe', '2023-12-30 15:13:00', NULL, 0, NULL, 0),
-(2, 'alice_smith', 'alice.smith@example.com', '$2b$10$G4Tq9gYJ2GB5i8PnGl6/q.qThMeaWcnQoFBQEuy5b98N8Xw9M00s.', 'Alice Smith Jeans', '2023-12-30 15:13:43', NULL, 0, NULL, 0);
+(1, 'john_doe', 'john.doe@example.com', '$2b$10$2H7IsyfXDiLgM5AAUDN8ge3DlAECXckmqkowtu/ev5gCQCjH8FLbq', 'John Doe', '2023-12-30 15:13:00', NULL, 0, '2023-12-31 17:33:09', 0),
+(2, 'alice_smith', 'alice.smith@example.com', '$2b$10$G4Tq9gYJ2GB5i8PnGl6/q.qThMeaWcnQoFBQEuy5b98N8Xw9M00s.', 'Alice Smith Jeans', '2023-12-30 15:13:43', NULL, 0, NULL, 0),
+(3, 'new_jeans', 'jeansnew@example.com', '$2b$10$1QcbO4rvUZmdbzDf1OGbDOz24oD0Wtk2zmbkpD6FEPx/uPqELNoPq', 'New Something Jeans', '2023-12-31 16:42:38', NULL, 0, '2023-12-31 16:54:40', 0),
+(4, 'jhead', 'jhead.doe@example.com', '$2b$10$yk1.iqzxGwYYDBCfu/eKpep6kD.Sd5ObI8QSUN8qz40T5epqQaG3G', 'Jean Heash', '2023-12-31 17:40:31', NULL, 0, '2023-12-31 18:06:52', 0);
 
 --
 -- Index pour les tables déchargées
@@ -145,13 +168,13 @@ ALTER TABLE `meetingschedule`
 -- AUTO_INCREMENT pour la table `response`
 --
 ALTER TABLE `response`
-  MODIFY `responseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `responseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `userId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Contraintes pour les tables déchargées

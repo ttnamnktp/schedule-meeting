@@ -3,6 +3,10 @@ const pool = require("../../config/database");
 module.exports = {
 
     createMeetingSchedule: (data, callBack) => {
+        // console.log(data.startTime);
+        const startTimeJson = JSON.stringify(data.startTime);
+        // console.log(startTimeJson);
+
         pool.query(
             `INSERT INTO meetingschedule (
                 title, 
@@ -17,18 +21,45 @@ module.exports = {
             [
                 data.title,
                 data.organizerId,
-                data.startTime,
+                startTimeJson,
                 data.duration,
                 data.location,
                 data.description,
                 data.status,
                 data.createdBy
             ],
-            (error, results, fields) => {
+            (error, resultsMeeting, fields) => {
                 if(error){
                     return callBack(error);
                 }
-                return callBack(null,results);
+                // Lấy số phần tử trong startTime
+                const danhSachKeys = Object.keys(data.startTime);
+                const soLuongPhanTu = danhSachKeys.length;
+
+                // tạo response
+                const doanText = {};
+                for (let i = 0; i < soLuongPhanTu; i++) {
+                    doanText[i] = 'yes';
+                }
+                const choiceJson = JSON.stringify(doanText);
+
+                const meetingId = resultsMeeting.insertId;
+
+                pool.query(
+                    `INSERT INTO response (userId, meetingId, choice)
+                    VALUES (?, ?, ?);`,
+                    [
+                        data.organizerId,
+                        meetingId,
+                        choiceJson
+                    ],
+                    (error, resultsResponse, fields) => {
+                        if(error){
+                            return callBack(error);
+                        }
+                        return callBack(null,resultsMeeting,resultsResponse);
+                    }
+                )
             }
         )
     },
@@ -40,6 +71,16 @@ module.exports = {
             (error, results, fields) => {
                 if (error){
                     callBack(error);
+                }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
                 }
                 return callBack(null, results);
             }
@@ -54,6 +95,16 @@ module.exports = {
                 if (error){
                     callBack(error);
                 }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
+                }
                 return callBack(null, results);
             }
         )
@@ -63,33 +114,83 @@ module.exports = {
         pool.query(
             `SELECT ms.*
             FROM meetingschedule ms
-            RIGHT JOIN response r ON ms.meetingId = r.meetingId
-            WHERE r.userId = ? AND deleted = 0;
+            JOIN response r ON ms.meetingId = r.meetingId
+            WHERE r.userId = ? AND ms.deleted = 0 AND ms.organizerId != r.userId;
             `,
             [participantId],
             (error, results, fields) => {
                 if (error){
                     callBack(error);
                 }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
+                }
                 return callBack(null, results);
             }
         )
     },
 
-    getMeetingSchedulesByUserId: (participantId, callBack) => {
+    getMeetingSchedulesByUserId: (userId, callBack) => {
         pool.query(
             `SELECT ms.*
             FROM meetingschedule ms
-            LEFT JOIN response r ON ms.meetingId = r.meetingId
-            WHERE (r.userId = ? OR ms.organizerId = ?) AND ms.deleted = 0;
+            JOIN response r ON ms.meetingId = r.meetingId
+            WHERE r.userId = ? AND ms.deleted = 0;
             `,
             [
-                participantId,
-                participantId
+                userId,
+                userId
             ],
             (error, results, fields) => {
                 if (error){
                     callBack(error);
+                }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
+                }
+                return callBack(null, results);
+            }
+        )
+    },
+
+    getConfirmedMeetingSchedules: (userId, callBack) => {
+        pool.query(
+            `SELECT ms.*
+            FROM meetingschedule ms
+            JOIN response r ON ms.meetingId = r.meetingId
+            WHERE r.userId = ? AND status = 'confirmed' AND ms.deleted = 0;
+            `,
+            [
+                userId,
+                userId
+            ],
+            (error, results, fields) => {
+                if (error){
+                    callBack(error);
+                }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
                 }
                 return callBack(null, results);
             }
@@ -104,48 +205,83 @@ module.exports = {
                 if (error){
                     callBack(error);
                 }
+                for (let i = 0; i < results.length; i++){
+                    // Lấy giá trị của trường startTime từ kết quả
+                    const startTimeJsonString = results[i].startTime;
+
+                    // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+                    const startTimeObject = JSON.parse(startTimeJsonString);
+
+                    // Gán giá trị startTimeObject vào thuộc tính startTime của kết quả
+                    results[i].startTime = startTimeObject;
+                }
                 return callBack(null, results);
             }
         )
     },
 
     updateMeetingSchedule: (data, callBack) => {
+        const startTimeJson = JSON.stringify(data.startTime);
         pool.query(
             `UPDATE meetingschedule
             SET
               title = ?,
-              organizerId = ?,
               startTime = ?,
               duration = ?,
               location = ?,
               description = ?,
               status = ?,
-              createdBy = ?,
               modifiedAt = CURRENT_TIMESTAMP(),
               modifiedBy = organizerId
             WHERE meetingId = ?;`,
             [
                 data.title,
-                data.organizerId,
-                data.startTime,
+                startTimeJson,
                 data.duration,
                 data.location,
                 data.description,
                 data.status,
-                data.createdBy,
                 data.meetingId
             ],
-            (error, results, fields) => {
+            (error, resultsMeeting, fields) => {
                 if(error){
                     console.log(error)
                     return callBack(error);
                 }
-                return callBack(null,results);
+                // Lấy số phần tử trong startTime
+                const danhSachKeys = Object.keys(data.startTime);
+                const soLuongPhanTu = danhSachKeys.length;
+
+                // sửa response của organizer
+                const doanText = {};
+                for (let i = 0; i < soLuongPhanTu; i++) {
+                    doanText[i] = 'yes';
+                }
+                const choiceJson = JSON.stringify(doanText);
+                // console.log(choiceJson);
+
+                pool.query(
+                    `UPDATE response
+                    SET
+                        choice = ?
+                    WHERE meetingId = ?;`,
+                    [
+                        choiceJson,
+                        data.meetingId,
+                    ],
+                    (error, resultsResponse, fields) => {
+                        if(error){
+                            return callBack(error);
+                        }
+                        return callBack(null,resultsMeeting,resultsResponse);
+                    }
+                )
             }
         )
     },
 
     deleteMeetingSchedule: (data, callBack) => {
+        console.log(data.meetingId);
         pool.query(
             `UPDATE meetingschedule SET deleted = 1 , deletedAt = CURRENT_TIMESTAMP(), deletedBy = organizerId WHERE meetingId = ?`,
             [data.meetingId],

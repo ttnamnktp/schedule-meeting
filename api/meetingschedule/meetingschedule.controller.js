@@ -6,7 +6,8 @@ const {
     getMeetingSchedulesByUserId,
     getMeetingSchedulesByTitle,
     updateMeetingSchedule,
-    deleteMeetingSchedule
+    deleteMeetingSchedule,
+    getConfirmedMeetingSchedules
     } = require("./meetingschedule.service");
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
@@ -16,7 +17,7 @@ module.exports = {
 
     createMeetingSchedule: (req, res) => {
         const body = req.body;
-        createMeetingSchedule(body, (error, results) => {
+        createMeetingSchedule(body, (error, resultsMeeting, resultsResponse) => {
             if(error) {
                 console.log(error);
                 return res.status(500).json({
@@ -26,7 +27,8 @@ module.exports = {
             }
             return res.status(200).json({
                 success: 1,
-                data: results
+                dataMeeting: resultsMeeting,
+                dataResponse: resultsResponse
             });
         });
     },
@@ -45,7 +47,7 @@ module.exports = {
     },
 
     getMeetingSchedulesByOrganizerId: (req, res) => {
-        const organizerId = req.params.organizerId;
+        const organizerId = req.params.userId;
         getMeetingSchedulesByOrganizerId(organizerId, (error, results) => {
             if(error){
                 console.log(error);
@@ -59,7 +61,7 @@ module.exports = {
     },
 
     getMeetingSchedulesByParticipantId: (req, res) => {
-        const participantId = req.params.participantId;
+        const participantId = req.params.userId;
         getMeetingSchedulesByParticipantId(participantId, (error, results) => {
             if(error){
                 console.log(error);
@@ -87,8 +89,22 @@ module.exports = {
     },
 
     getMeetingSchedulesByTitle: (req, res) => {
-        const title = req.params.title;
+        const title = req.body.title;
         getMeetingSchedulesByTitle(title, (error, results) => {
+            if(error){
+                console.log(error);
+                return;
+            }
+            return res.json({
+                success:1,
+                data: results
+            });
+        });
+    },
+
+    getConfirmedMeetingSchedules: (req, res) => {
+        const userId = req.params.userId;
+        getConfirmedMeetingSchedules(userId, (error, results) => {
             if(error){
                 console.log(error);
                 return;
@@ -102,12 +118,12 @@ module.exports = {
 
     updateMeetingSchedule: (req, res) => {
         const body = req.body;
-        updateMeetingSchedule(body, (error, results) => {
+        updateMeetingSchedule(body, (error, resultsMeeting, resultsResponse) => {
             if(error){
                 console.log(error);
                 return;
             }
-            if(!results) {
+            if(!resultsMeeting) {
                 return res.json({
                     success: 0,
                     message: "Failed to update"
@@ -115,6 +131,8 @@ module.exports = {
             }
             return res.json({
                 success:1,
+                resultsMeeting: resultsMeeting,
+                resultsResponse: resultsResponse,
                 message: "Updated successfully"
             });
         });
@@ -122,6 +140,7 @@ module.exports = {
 
     deleteMeetingSchedule: (req, res) => {
         const data = req.body;
+        console.log(req.body);
         deleteMeetingSchedule(data, (error, results) => {
             if(error){
                 console.log(error);

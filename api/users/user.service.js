@@ -66,12 +66,25 @@ module.exports = {
 
     updateUser: (data, callBack) => {
         pool.query(
-            `UPDATE users SET username = ?, email = ?, passwordHash = ?, fullName = ? WHERE userId = ? AND deleted = 0`,
+            `UPDATE users SET username = ? WHERE userId = ? AND deleted = 0`,
             [
                 data.username,
-                data.email,
-                data.passwordHash,
-                data.fullName,
+                data.userId
+            ],
+            (error, results, fields) => {
+                if(error){
+                    return callBack(error);
+                }
+                return callBack(null,results);
+            }
+        )
+    },
+
+    updateUsername: (data, callBack) => {
+        pool.query(
+            `UPDATE users SET username = ? WHERE userId = ? AND deleted = 0`,
+            [
+                data.username,
                 data.userId
             ],
             (error, results, fields) => {
@@ -84,6 +97,7 @@ module.exports = {
     },
 
     deleteUser: (data, callBack) => {
+        console.log(data.userId);
         pool.query(
             `UPDATE users SET deleted = 1, deletedAt = CURRENT_TIMESTAMP() WHERE userId = ?`,
             [data.userId],
@@ -108,4 +122,5 @@ module.exports = {
             }
         )
     },
+
 }
